@@ -83,7 +83,7 @@ namespace Microsoft.eShopWeb.Web
 
             services.AddDbContext<CatalogContext>(
                 dbContextOptions => dbContextOptions
-                    .UseMySql(Configuration.GetConnectionString("IdentityConnection"), serverVersion)
+                    .UseMySql(Configuration.GetConnectionString("CatalogConnection"), serverVersion)
                     // The following three options help with debugging, but should
                     // be changed or removed for production.
                     .LogTo(Console.WriteLine, LogLevel.Information)

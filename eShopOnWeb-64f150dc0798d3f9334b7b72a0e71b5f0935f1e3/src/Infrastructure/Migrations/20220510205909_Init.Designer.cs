@@ -10,7 +10,7 @@ using Microsoft.eShopWeb.Infrastructure.Data;
 namespace Microsoft.eShopWeb.Infrastructure.Migrations
 {
     [DbContext(typeof(CatalogContext))]
-    [Migration("20220510133441_Init")]
+    [Migration("20220510205909_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

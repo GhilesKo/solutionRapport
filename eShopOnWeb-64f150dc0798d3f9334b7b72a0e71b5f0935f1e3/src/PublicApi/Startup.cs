@@ -69,7 +69,7 @@ namespace Microsoft.eShopWeb.PublicApi
 
             services.AddDbContext<CatalogContext>(
                 dbContextOptions => dbContextOptions
-                    .UseMySql(Configuration.GetConnectionString("IdentityConnection"), serverVersion));
+                    .UseMySql(Configuration.GetConnectionString("CatalogConnection"), serverVersion));
             // use real database
             // Requires LocalDB which can be installed with SQL Server Express 2016
             // https://www.microsoft.com/en-us/download/details.aspx?id=54284
