@@ -44,10 +44,10 @@ namespace Microsoft.eShopWeb.Web
         public void ConfigureDevelopmentServices(IServiceCollection services)
         {
             // use in-memory database
-            ConfigureInMemoryDatabases(services);
+            //ConfigureInMemoryDatabases(services);
 
             // use real database
-            //ConfigureProductionServices(services);
+            ConfigureProductionServices(services);
         }
 
         public void ConfigureDockerServices(IServiceCollection services)
@@ -74,15 +74,32 @@ namespace Microsoft.eShopWeb.Web
 
         public void ConfigureProductionServices(IServiceCollection services)
         {
-            // use real database
-            // Requires LocalDB which can be installed with SQL Server Express 2016
-            // https://www.microsoft.com/en-us/download/details.aspx?id=54284
-            services.AddDbContext<CatalogContext>(c =>
-                c.UseSqlServer(Configuration.GetConnectionString("CatalogConnection")));
+            // Replace with your server version and type.
+            // Use 'MariaDbServerVersion' for MariaDB.
+            // Alternatively, use 'ServerVersion.AutoDetect(connectionString)'.
+            // For common usages, see pull request #1233.
+            var serverVersion = new MariaDbServerVersion(new Version(10, 6, 0));
 
-            // Add Identity DbContext
-            services.AddDbContext<AppIdentityDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("IdentityConnection")));
+
+            services.AddDbContext<CatalogContext>(
+                dbContextOptions => dbContextOptions
+                    .UseMySql(Configuration.GetConnectionString("IdentityConnection"), serverVersion)
+                    // The following three options help with debugging, but should
+                    // be changed or removed for production.
+                    .LogTo(Console.WriteLine, LogLevel.Information)
+                    .EnableSensitiveDataLogging()
+                    .EnableDetailedErrors()
+            );
+
+            services.AddDbContext<AppIdentityDbContext>(
+              dbContextOptions => dbContextOptions
+                  .UseMySql(Configuration.GetConnectionString("IdentityConnection"), serverVersion)
+                  // The following three options help with debugging, but should
+                  // be changed or removed for production.
+                  .LogTo(Console.WriteLine, LogLevel.Information)
+                  .EnableSensitiveDataLogging()
+                  .EnableDetailedErrors()
+          );
 
             ConfigureServices(services);
         }
@@ -97,35 +114,10 @@ namespace Microsoft.eShopWeb.Web
         public void ConfigureServices(IServiceCollection services)
         {
 
-            // Replace with your connection string.
-            var connectionString = "server=localhost;user=root;password=allo123;database=ef";
-
-            // Replace with your server version and type.
-            // Use 'MariaDbServerVersion' for MariaDB.
-            // Alternatively, use 'ServerVersion.AutoDetect(connectionString)'.
-            // For common usages, see pull request #1233.
-            var serverVersion = new MariaDbServerVersion(new Version(8, 0, 27));
+            
 
             // Replace 'YourDbContext' with the name of your own DbContext derived class.
-            services.AddDbContext<CatalogContext>(
-                dbContextOptions => dbContextOptions
-                    .UseMySql(connectionString, serverVersion)
-                    // The following three options help with debugging, but should
-                    // be changed or removed for production.
-                    .LogTo(Console.WriteLine, LogLevel.Information)
-                    .EnableSensitiveDataLogging()
-                    .EnableDetailedErrors()
-            );
-
-            services.AddDbContext<AppIdentityDbContext>(
-              dbContextOptions => dbContextOptions
-                  .UseMySql(connectionString, serverVersion)
-                  // The following three options help with debugging, but should
-                  // be changed or removed for production.
-                  .LogTo(Console.WriteLine, LogLevel.Information)
-                  .EnableSensitiveDataLogging()
-                  .EnableDetailedErrors()
-          );
+            
 
 
             services.AddCookieSettings();

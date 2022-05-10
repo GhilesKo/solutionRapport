@@ -20,6 +20,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -63,15 +64,24 @@ namespace Microsoft.eShopWeb.PublicApi
 
         public void ConfigureProductionServices(IServiceCollection services)
         {
+            var serverVersion = new MariaDbServerVersion(new Version(10, 6, 0));
+
+
+            services.AddDbContext<CatalogContext>(
+                dbContextOptions => dbContextOptions
+                    .UseMySql(Configuration.GetConnectionString("IdentityConnection"), serverVersion));
             // use real database
             // Requires LocalDB which can be installed with SQL Server Express 2016
             // https://www.microsoft.com/en-us/download/details.aspx?id=54284
-            services.AddDbContext<CatalogContext>(c =>
-                c.UseSqlServer(Configuration.GetConnectionString("CatalogConnection")));
+            //services.AddDbContext<CatalogContext>(c =>
+            //    c.UseSqlServer(Configuration.GetConnectionString("CatalogConnection")));
 
+            services.AddDbContext<AppIdentityDbContext>(
+              dbContextOptions => dbContextOptions
+                  .UseMySql(Configuration.GetConnectionString("IdentityConnection"), serverVersion));
             // Add Identity DbContext
-            services.AddDbContext<AppIdentityDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("IdentityConnection")));
+            //services.AddDbContext<AppIdentityDbContext>(options =>
+            //    options.UseSqlServer(Configuration.GetConnectionString("IdentityConnection")));
 
             ConfigureServices(services);
         }

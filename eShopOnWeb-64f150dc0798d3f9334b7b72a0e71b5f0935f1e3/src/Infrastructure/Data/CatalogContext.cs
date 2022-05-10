@@ -26,15 +26,7 @@ namespace Microsoft.eShopWeb.Infrastructure.Data
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<BasketItem> BasketItems { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            var connectionString = "server=localhost;port=3306;user=root;password=allo123;database=ef";
-            var serverVersion = new MariaDbServerVersion(new Version(8, 0, 27));
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseMySql(connectionString, serverVersion);
-            }  
-        }
+       
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
