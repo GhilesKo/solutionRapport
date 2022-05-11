@@ -61,14 +61,7 @@ namespace Microsoft.eShopWeb.Web
 
         private void ConfigureInMemoryDatabases(IServiceCollection services)
         {
-            // use in-memory database
-            services.AddDbContext<CatalogContext>(c =>
-                c.UseInMemoryDatabase("Catalog"));
-
-            // Add Identity DbContext
-            services.AddDbContext<AppIdentityDbContext>(options =>
-                options.UseInMemoryDatabase("Identity"));
-
+          
             ConfigureServices(services);
         }
 
@@ -114,10 +107,18 @@ namespace Microsoft.eShopWeb.Web
         public void ConfigureServices(IServiceCollection services)
         {
 
-            
 
+            var serverVersion = new MariaDbServerVersion(new Version(10, 6, 0));
             // Replace 'YourDbContext' with the name of your own DbContext derived class.
-            
+            services.AddDbContext<AppIdentityDbContext>(
+           dbContextOptions => dbContextOptions
+               .UseMySql(Configuration.GetConnectionString("IdentityConnection"), serverVersion)
+               // The following three options help with debugging, but should
+               // be changed or removed for production.
+               .LogTo(Console.WriteLine, LogLevel.Information)
+               .EnableSensitiveDataLogging()
+               .EnableDetailedErrors()
+       );
 
 
             services.AddCookieSettings();
